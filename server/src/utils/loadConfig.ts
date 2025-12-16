@@ -1,4 +1,4 @@
-import { loadSchema, loadYaml, validate, addSchema } from "./validator.js";
+import { loadSchema, loadYaml, validate, addSchema } from "./validator";
 import path from "path";
 import fs from "fs";
 
