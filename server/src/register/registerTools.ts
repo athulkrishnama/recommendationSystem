@@ -5,7 +5,6 @@ import { ItemRepo } from "../db/repository/ItemRepo";
 import { config } from "../index";
 
 export function registerTools(server: McpServer) {
-  // Profile search tool
   (server.tool as any)(
     "search_profiles",
     {
@@ -48,7 +47,6 @@ export function registerTools(server: McpServer) {
     }
   );
 
-  // Generic profile filter tool - domain agnostic
   (server.tool as any)(
     "filter_profiles",
     {
@@ -106,9 +104,7 @@ export function registerTools(server: McpServer) {
     }
   );
 
-  // Item tools (only if item config exists)
   if (config.item) {
-    // Search single item by ID
     (server.tool as any)(
       "search_item",
       {
@@ -150,7 +146,6 @@ export function registerTools(server: McpServer) {
       }
     );
 
-    // Generic filter tool - domain agnostic
     (server.tool as any)(
       "filter_items",
       {
@@ -209,11 +204,6 @@ export function registerTools(server: McpServer) {
     );
   }
 
-  // =============================================================================
-  // CORE RECOMMENDATION TOOLS
-  // =============================================================================
-
-  // Tool 1: match_items - Deterministic matching (NO LLM)
   if (config.matching && config.item) {
     (server.tool as any)(
       "match_items",
@@ -231,7 +221,6 @@ export function registerTools(server: McpServer) {
           const profileRepo = new ProfileRepo();
           const itemRepo = new ItemRepo();
 
-          // 1. Fetch profile
           const profile = await profileRepo.getProfileById(args.profileId);
           if (!profile) {
             return {
@@ -250,10 +239,8 @@ export function registerTools(server: McpServer) {
             };
           }
 
-          // 2. Fetch all items
           const allItems = await itemRepo.getAllItems();
 
-          // 3. Apply filters from config (domain-agnostic)
           const matchingConfig = config.matching!;
           const filtered = allItems.filter((item: any) => {
             for (const [fieldName, filterDef] of Object.entries(
@@ -262,7 +249,6 @@ export function registerTools(server: McpServer) {
               const itemValue = item[fieldName];
               const { operator, value } = filterDef;
 
-              // Apply operator-based filtering
               switch (operator) {
                 case "eq":
                   if (itemValue !== value) return false;
@@ -299,21 +285,18 @@ export function registerTools(server: McpServer) {
             return true;
           });
 
-          // 4. Calculate scores using configured dimensions (domain-agnostic)
           const scoringDimensions = matchingConfig.scoring.dimensions;
 
           const scored = filtered.map((item: any) => {
             let totalScore = 0;
             const breakdown: Record<string, number> = {};
 
-            // Execute each scoring dimension
             for (const dimension of scoringDimensions) {
               const itemValue = item[dimension.itemField];
               let dimensionScore = 0;
 
               switch (dimension.operation) {
                 case "normalize":
-                  // Normalize to 0-1 range
                   const min = dimension.normalizeMin || 0;
                   const max = dimension.normalizeMax || 1;
                   dimensionScore = (itemValue - min) / (max - min) || 0;
@@ -321,7 +304,6 @@ export function registerTools(server: McpServer) {
                   break;
 
                 case "price_fit":
-                  // Price fit: how well price matches profile budget
                   if (dimension.profileField) {
                     const budget = profile[dimension.profileField] || 10000;
                     dimensionScore = calculatePriceFit(itemValue, budget);
@@ -329,7 +311,6 @@ export function registerTools(server: McpServer) {
                   break;
 
                 case "array_includes":
-                  // Check if item value is in profile array
                   if (dimension.profileField) {
                     const profileArray = profile[dimension.profileField] || [];
                     dimensionScore = Array.isArray(profileArray)
@@ -341,7 +322,6 @@ export function registerTools(server: McpServer) {
                   break;
 
                 case "exact_match":
-                  // Binary match: 1 if equal, 0 otherwise
                   if (dimension.profileField) {
                     dimensionScore =
                       profile[dimension.profileField] === itemValue ? 1.0 : 0.0;
@@ -349,7 +329,6 @@ export function registerTools(server: McpServer) {
                   break;
 
                 case "similarity":
-                  // TODO: Implement string/vector similarity
                   dimensionScore = 0;
                   break;
               }
@@ -365,7 +344,6 @@ export function registerTools(server: McpServer) {
             };
           });
 
-          // 5. Sort by score and take top N
           scored.sort((a, b) => b.score - a.score);
           const topMatches = scored.slice(0, matchingConfig.maxCandidates);
 
@@ -405,7 +383,6 @@ export function registerTools(server: McpServer) {
     );
   }
 
-  // Tool 2: draft_recommendation - LLM narrative generation
   (server.tool as any)(
     "draft_recommendation",
     {
@@ -420,9 +397,6 @@ export function registerTools(server: McpServer) {
     },
     async (args: any) => {
       try {
-        // TODO: Integrate with actual LLM service (OpenAI, Anthropic, Google)
-        // For now, generate a simple template-based recommendation
-
         const itemNames = args.matchedItems
           .slice(0, 5)
           .map(
@@ -471,7 +445,6 @@ export function registerTools(server: McpServer) {
     }
   );
 
-  // Tool 3: generate_message - Template-based message formatting
   if (config.templates) {
     (server.tool as any)(
       "generate_message",
@@ -516,7 +489,6 @@ export function registerTools(server: McpServer) {
             };
           }
 
-          // Build variable map
           const vars: Record<string, string> = {
             customerName: args.profile.name || "Customer",
             itemCount: (args.items?.length || 0).toString(),
@@ -525,7 +497,6 @@ export function registerTools(server: McpServer) {
             ...config.templates!.variables,
           };
 
-          // Inject variables into template
           const injectVars = (text: string): string => {
             return text.replace(/\{\{(\w+)\}\}/g, (match, varName) => {
               return vars[varName] !== undefined ? vars[varName] : match;
@@ -576,10 +547,7 @@ export function registerTools(server: McpServer) {
   }
 }
 
-// Helper function for price fit calculation
 function calculatePriceFit(price: number, budget: number): number {
-  // Optimal price is around 70% of budget
-  // Score decreases as price moves away from optimal
   const optimalPrice = budget * 0.7;
   const diff = Math.abs(price - optimalPrice);
   const range = budget * 0.5;

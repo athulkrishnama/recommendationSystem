@@ -11,7 +11,6 @@ import { join } from "path";
 
 const { configPath } = parseArgs();
 
-// ✅ NOW SAFE IN ESM
 const schemaPath = join(__dirname, "schemas/root.schema.json");
 
 export const config = loadConfig<Config>(configPath, schemaPath);

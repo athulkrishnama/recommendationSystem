@@ -4,7 +4,6 @@ import { ItemRepo } from "../db/repository/ItemRepo";
 import { config } from "../index";
 
 export function registerResources(server: McpServer) {
-  // Profile identifiers resource
   server.resource("identifiers", "Profile Identifiers Configuration", () => {
     return {
       contents: [
@@ -58,7 +57,6 @@ export function registerResources(server: McpServer) {
     };
   });
 
-  // Profile catalog resource
   server.resource("profile-catalog", "Complete Profile Catalog", async () => {
     const repo = new ProfileRepo();
     const profiles = await repo.getProfileByIdentifier(
@@ -84,9 +82,7 @@ export function registerResources(server: McpServer) {
     };
   });
 
-  // Item resources (only if item config exists)
   if (config.item) {
-    // Item identifiers resource
     server.resource(
       "item-identifiers",
       "Item Identifiers Configuration",
@@ -141,7 +137,6 @@ export function registerResources(server: McpServer) {
       }
     );
 
-    // Item catalog resource
     server.resource("item-catalog", "Complete Item Catalog", async () => {
       const repo = new ItemRepo();
       const items = await repo.getAllItems();
@@ -165,7 +160,6 @@ export function registerResources(server: McpServer) {
     });
   }
 
-  // Matching rules resource (only if matching config exists)
   if (config.matching) {
     server.resource("matching-rules", "Matching Rules Configuration", () => {
       return {
@@ -180,7 +174,6 @@ export function registerResources(server: McpServer) {
     });
   }
 
-  // Message templates resource (only if templates config exists)
   if (config.templates) {
     server.resource(
       "message-templates",

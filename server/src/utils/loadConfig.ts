@@ -2,8 +2,6 @@ import { loadSchema, loadYaml, validate, addSchema } from "./validator.js";
 import path from "path";
 import fs from "fs";
 
-// Preload common schemas
-// Preload common schemas
 const schemasDir = path.join(__dirname, "../schemas");
 const databaseSchemaPath = path.join(schemasDir, "database.schema.json");
 if (fs.existsSync(databaseSchemaPath)) {
