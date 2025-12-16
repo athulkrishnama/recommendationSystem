@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "product.schema.json",
-  "title": "Product Configuration Schema",
-  "description": "Configuration for product storage, identity resolution, and field projection",
+  "$id": "item.schema.json",
+  "title": "Item Configuration Schema",
+  "description": "Configuration for item storage, identity resolution, and field projection",
 
   "type": "object",
   "required": [
@@ -16,14 +16,14 @@
     "collection": {
       "type": "string",
       "minLength": 1,
-      "description": "MongoDB collection name where product documents are stored"
+      "description": "MongoDB collection name where item documents are stored"
     },
 
     "allowedIdentifiers": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "description": "All fields that are allowed to be used as product identifiers",
+      "description": "All fields that are allowed to be used as item identifiers",
       "items": {
         "type": "string",
         "minLength": 1
@@ -45,7 +45,7 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "description": "Fields that are allowed to be read from the product document",
+      "description": "Fields that are allowed to be read from the item document",
       "items": {
         "type": "string",
         "minLength": 1

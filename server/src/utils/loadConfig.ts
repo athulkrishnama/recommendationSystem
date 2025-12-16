@@ -15,9 +15,9 @@ if (fs.existsSync(profileSchemaPath)) {
   addSchema(loadSchema(profileSchemaPath), "profile.schema.json");
 }
 
-const productSchemaPath = path.join(schemasDir, "product.schema.json");
+const productSchemaPath = path.join(schemasDir, "item.schema.json");
 if (fs.existsSync(productSchemaPath)) {
-  addSchema(loadSchema(productSchemaPath), "product.schema.json");
+  addSchema(loadSchema(productSchemaPath), "item.schema.json");
 }
 
 export function loadConfig<T>(configPath: string, schemaPath: string): T {
@@ -36,7 +36,7 @@ export function loadConfig<T>(configPath: string, schemaPath: string): T {
     ...rootConfig,
     database: loadSiblingYaml("database.yaml"),
     profile: loadSiblingYaml("profile.yaml"),
-    product: loadSiblingYaml("product.yaml"),
+    item: loadSiblingYaml("item.yaml"),
   };
   const schema = loadSchema(schemaPath);
   return validate<T>(schema, config);

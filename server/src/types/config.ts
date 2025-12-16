@@ -15,7 +15,7 @@ export interface ProfileConfig {
   projection: string[];
 }
 
-export interface ProductConfig {
+export interface ItemConfig {
   collection: string;
   allowedIdentifiers: string[];
   defaultIdentifiers: string[];
@@ -26,5 +26,5 @@ export interface Config {
   database: DatabaseConfig;
   server: ServerConfig;
   profile: ProfileConfig;
-  product?: ProductConfig;
+  item?: ItemConfig;
 }

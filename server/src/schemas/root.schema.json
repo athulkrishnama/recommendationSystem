@@ -9,8 +9,8 @@
     "profile": {
       "$ref": "profile.schema.json"
     },
-    "product": {
-      "$ref": "product.schema.json"
+    "item": {
+      "$ref": "item.schema.json"
     },
     "server": {
       "type": "object",

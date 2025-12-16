@@ -2,30 +2,46 @@ import { Collection } from "mongodb";
 import { mongoClient } from "../mongoClient";
 import { config } from "../../index";
 
-export class ProfileRepo {
+export class ItemRepo {
   private collection: Collection;
+
   constructor() {
-    this.collection = mongoClient.getDb().collection(config.profile.collection);
+    if (!config.item) {
+      throw new Error("Item configuration is not defined");
+    }
+    this.collection = mongoClient.getDb().collection(config.item.collection);
   }
 
-  async getProfileByIdentifier(identifer: string[], value: string) {
-    // Ensure value is a valid string for regex
-    if (!value || typeof value !== "string") {
+  /**
+   * Get all items with configured projection
+   */
+  async getAllItems() {
+    if (!config.item) {
       return [];
     }
 
-    const orConditions = identifer.map((field) => ({
-      [field]: { $regex: value, $options: "i" },
-    }));
-
     const projection: Record<string, number> = {};
-    config.profile.projection.forEach((field) => {
+    config.item.projection.forEach((field) => {
       projection[field] = 1;
     });
 
-    return await this.collection
-      .find({ $or: orConditions }, { projection })
-      .toArray();
+    return await this.collection.find({}, { projection }).toArray();
+  }
+
+  /**
+   * Get a single item by ID
+   */
+  async getItemById(id: string) {
+    if (!config.item) {
+      return null;
+    }
+
+    const projection: Record<string, number> = {};
+    config.item.projection.forEach((field) => {
+      projection[field] = 1;
+    });
+
+    return await this.collection.findOne({ id }, { projection });
   }
 
   /**
@@ -34,8 +50,12 @@ export class ProfileRepo {
    * @param filters Object with field-value pairs for filtering
    */
   async filter(filters: Record<string, any>) {
+    if (!config.item) {
+      return [];
+    }
+
     // Validate that all filter fields are in the projection
-    const allowedFields = config.profile.projection;
+    const allowedFields = config.item.projection;
     const filterFields = Object.keys(filters);
 
     const invalidFields = filterFields.filter(
@@ -78,7 +98,7 @@ export class ProfileRepo {
     }
 
     const projection: Record<string, number> = {};
-    config.profile.projection.forEach((field) => {
+    config.item.projection.forEach((field) => {
       projection[field] = 1;
     });
 
