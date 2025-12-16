@@ -164,4 +164,38 @@ export function registerResources(server: McpServer) {
       };
     });
   }
+
+  // Matching rules resource (only if matching config exists)
+  if (config.matching) {
+    server.resource("matching-rules", "Matching Rules Configuration", () => {
+      return {
+        contents: [
+          {
+            uri: "config://matching/rules",
+            mimeType: "application/json",
+            text: JSON.stringify(config.matching, null, 2),
+          },
+        ],
+      };
+    });
+  }
+
+  // Message templates resource (only if templates config exists)
+  if (config.templates) {
+    server.resource(
+      "message-templates",
+      "Message Templates Configuration",
+      () => {
+        return {
+          contents: [
+            {
+              uri: "config://templates/channels",
+              mimeType: "application/json",
+              text: JSON.stringify(config.templates, null, 2),
+            },
+          ],
+        };
+      }
+    );
+  }
 }

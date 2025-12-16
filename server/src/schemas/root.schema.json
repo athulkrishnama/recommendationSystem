@@ -12,6 +12,12 @@
     "item": {
       "$ref": "item.schema.json"
     },
+    "matching": {
+      "$ref": "matching.schema.json"
+    },
+    "templates": {
+      "$ref": "templates.schema.json"
+    },
     "server": {
       "type": "object",
       "properties": {

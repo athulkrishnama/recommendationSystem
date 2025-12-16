@@ -1,0 +1,44 @@
+maxCandidates: 20
+
+# Generic filters - can be customized for any industry
+# Each filter is a field-value constraint
+filters:
+  stock:
+    operator: "gte" # greater than or equal
+    value: 1
+  category:
+    operator: "in" # value must be in list
+    value:
+      - electronics
+      - fashion
+      - home
+      - books
+  price:
+    operator: "lte" # less than or equal
+    value: 80000
+  rating:
+    operator: "gte"
+    value: 3.5
+
+# Scoring dimensions - completely configurable
+# Each dimension has a weight and maps to item/profile field operations
+scoring:
+  # Total weights should sum to 1.0
+  dimensions:
+    - name: "budget_alignment"
+      weight: 0.3
+      itemField: "price"
+      profileField: "monthlySpend"
+      operation: "price_fit" # special operation for price scoring
+
+    - name: "preference_match"
+      weight: 0.3
+      itemField: "category"
+      profileField: "preferences"
+      operation: "array_includes" # check if item value in profile array
+
+    - name: "quality_score"
+      weight: 0.4
+      itemField: "rating"
+      operation: "normalize" # normalize to 0-1 scale
+      normalizeMax: 5

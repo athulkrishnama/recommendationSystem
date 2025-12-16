@@ -29,6 +29,18 @@ export class ProfileRepo {
   }
 
   /**
+   * Get a single profile by ID
+   */
+  async getProfileById(id: string) {
+    const projection: Record<string, number> = {};
+    config.profile.projection.forEach((field) => {
+      projection[field] = 1;
+    });
+
+    return await this.collection.findOne({ id }, { projection });
+  }
+
+  /**
    * Generic filter method that accepts any field-value pairs
    * Validates fields against configured projection
    * @param filters Object with field-value pairs for filtering

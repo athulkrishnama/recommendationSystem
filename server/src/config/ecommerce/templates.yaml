@@ -1,0 +1,39 @@
+channels:
+  email:
+    tone: "professional"
+    subject: "Personalized Recommendations for {{customerName}}"
+    body: |
+      Hi {{customerName}},
+
+      Based on your profile, we've selected {{itemCount}} items for you:
+
+      {{recommendations}}
+
+      {{ctaText}}
+
+      Best regards,
+      {{companyName}}
+    ctaText: "Click here to view your recommendations"
+
+  whatsapp:
+    tone: "friendly"
+    body: |
+      Hi {{customerName}}! 👋
+
+      We found {{itemCount}} perfect matches for you:
+      {{recommendations}}
+
+      Reply to learn more!
+
+  call_script:
+    tone: "professional"
+    greeting: "Hello {{customerName}}, this is {{agentName}} from {{companyName}}."
+    body: |
+      I'm calling because we've identified {{itemCount}} products that match your interests:
+      {{recommendations}}
+
+      Would you like to hear more about any of these?
+
+variables:
+  companyName: "E-Shop Pro"
+  agentName: "Sarah"

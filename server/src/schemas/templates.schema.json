@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "templates.schema.json",
+  "title": "Templates Configuration Schema",
+  "description": "Configuration for message templates across different channels",
+
+  "type": "object",
+  "required": ["channels", "variables"],
+
+  "properties": {
+    "channels": {
+      "type": "object",
+      "description": "Channel-specific message templates",
+      "patternProperties": {
+        "^[a-z_]+$": {
+          "type": "object",
+          "required": ["tone", "body"],
+          "properties": {
+            "tone": {
+              "type": "string",
+              "enum": ["professional", "friendly", "urgent", "casual"],
+              "description": "Communication tone for this channel"
+            },
+            "subject": {
+              "type": "string",
+              "description": "Message subject (for email)"
+            },
+            "body": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Message body template with {{variables}}"
+            },
+            "greeting": {
+              "type": "string",
+              "description": "Greeting message (for call scripts)"
+            },
+            "ctaText": {
+              "type": "string",
+              "description": "Call-to-action text"
+            }
+          }
+        }
+      },
+      "minProperties": 1
+    },
+
+    "variables": {
+      "type": "object",
+      "description": "Global template variables",
+      "patternProperties": {
+        "^[a-zA-Z]+$": {
+          "type": "string"
+        }
+      }
+    }
+  },
+
+  "additionalProperties": false
+}
