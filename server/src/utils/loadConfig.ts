@@ -64,6 +64,19 @@ export function loadConfig<T>(): T {
     templates: loadSiblingYaml("templates.yaml"),
   };
 
+  console.error(`Environment MONGO_URL: ${process.env.MONGO_URL || "NOT SET"}`);
+  console.error(`Database config loaded: ${JSON.stringify(config.database)}`);
+
+  if (process.env.MONGO_URL && config.database) {
+    const mongoUrl = new URL(process.env.MONGO_URL);
+    const dbConfig = config.database as any;
+    dbConfig.uri = `${mongoUrl.protocol}//${mongoUrl.host}`;
+    if (mongoUrl.pathname && mongoUrl.pathname !== "/") {
+      dbConfig.name = mongoUrl.pathname.slice(1);
+    }
+    console.error(`Using MongoDB from env: ${dbConfig.uri}/${dbConfig.name}`);
+  }
+
   const schemaPath = path.join(__dirname, "../schemas/root.schema.json");
   const schema = loadSchema(schemaPath);
   return validate<T>(schema, config);

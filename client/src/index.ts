@@ -115,6 +115,46 @@ If you need to call multiple tools in sequence, just return the FIRST one.`;
 
     console.log(`🔧 Calling tool: ${toolCall.tool}`);
 
+    // Handle generate_message requests - need to run full workflow
+    if (toolCall.tool === "generate_message") {
+      const params = toolCall.params || {};
+
+      // If we have profileId/channel but missing profile object, run workflow
+      if (params.profileId || (params.channel && !params.profile)) {
+        console.log("\n🔄 Running full recommendation workflow...\n");
+
+        const { runRecommendation } = await import(
+          "./workflow/recommendationFlow"
+        );
+
+        const profileIdentifier =
+          params.profileId || query.match(/\b[\w.]+@[\w.]+\b/)?.[0] || "user";
+        const channel = params.channel || "whatsapp";
+
+        const result = await runRecommendation(
+          profileIdentifier,
+          channel as any
+        );
+
+        if (result.success) {
+          console.log("\n✅ Message Generated:\n");
+          console.log("━".repeat(60));
+          if (result.message.subject) {
+            console.log(`Subject: ${result.message.subject}`);
+          }
+          if (result.message.greeting) {
+            console.log(`\n${result.message.greeting}`);
+          }
+          console.log(`\n${result.message.body || result.message.message}`);
+          console.log("━".repeat(60));
+          console.log();
+        } else {
+          console.log("\n❌ Workflow failed:", result.error, "\n");
+        }
+        return;
+      }
+    }
+
     let toolParams = toolCall.params || {};
     if (
       toolCall.tool === "filter_items" ||
