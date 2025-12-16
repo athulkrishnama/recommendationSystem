@@ -28,12 +28,27 @@ if (fs.existsSync(templatesSchemaPath)) {
   addSchema(loadSchema(templatesSchemaPath), "templates.schema.json");
 }
 
-export function loadConfig<T>(configPath: string, schemaPath: string): T {
-  const rootConfig = loadYaml(configPath) as Record<string, unknown>;
-  const configDir = path.dirname(configPath);
+export function loadConfig<T>(): T {
+  const isBuilt = __dirname.includes("build");
+  const configBaseDir = isBuilt
+    ? path.join(__dirname, "../config")
+    : path.join(__dirname, "../config");
+
+  if (!fs.existsSync(configBaseDir)) {
+    throw new Error(`Config directory not found: ${configBaseDir}`);
+  }
+
+  const rootConfigPath = path.join(configBaseDir, "config.yaml");
+  if (!fs.existsSync(rootConfigPath)) {
+    throw new Error(`config.yaml not found in: ${configBaseDir}`);
+  }
+
+  console.error(`Loading config from: ${configBaseDir}`);
+
+  const rootConfig = loadYaml(rootConfigPath) as Record<string, unknown>;
 
   const loadSiblingYaml = (filename: string) => {
-    const filePath = path.join(configDir, filename);
+    const filePath = path.join(configBaseDir, filename);
     if (fs.existsSync(filePath)) {
       return loadYaml(filePath);
     }
@@ -48,6 +63,8 @@ export function loadConfig<T>(configPath: string, schemaPath: string): T {
     matching: loadSiblingYaml("matching.yaml"),
     templates: loadSiblingYaml("templates.yaml"),
   };
+
+  const schemaPath = path.join(__dirname, "../schemas/root.schema.json");
   const schema = loadSchema(schemaPath);
   return validate<T>(schema, config);
 }

@@ -9,8 +9,8 @@
     "recommendation_system_mcp": "./build/index.js"
   },
   "scripts": {
-    "build": "tsc && xcopy src\\schemas build\\schemas /E /I /Y",
-    "start": "node build/index.js --config ./config/ecommerce",
+    "build": "tsc && xcopy src\\schemas build\\schemas /E /I /Y && xcopy src\\config build\\config /E /I /Y",
+    "start": "node build/index.js",
     "inspector": "npx @modelcontextprotocol/inspector -e CONFIG_PATH=src/config/ecommerce/config.yaml node server.js"
   },
   "files": [
