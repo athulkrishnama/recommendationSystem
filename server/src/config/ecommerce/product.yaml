@@ -1,0 +1,21 @@
+collection: products
+
+allowedIdentifiers:
+  - id
+  - name
+  - sku
+  - category
+
+defaultIdentifiers:
+  - name
+  - sku
+
+projection:
+  - id
+  - name
+  - description
+  - price
+  - category
+  - stock
+  - tags
+  - attributes

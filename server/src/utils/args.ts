@@ -10,12 +10,14 @@ export function parseArgs(): { configPath: string } {
   }
 
   if (!configPath) {
-    // Default or error? User said "extract arguments... and using that get ---config path".
-    // I will throw if not found or return null?
-    // Let's assume it's required as per "pass that to ...".
-    // But for better DX, maybe default? The user didn't specify default.
-    // I'll throw an error if missing to be safe/explicit.
-    console.error("Error: --config argument is required");
+    // Try environment variable as fallback
+    configPath = process.env.CONFIG_PATH || "";
+  }
+
+  if (!configPath) {
+    console.error(
+      "Error: --config argument or CONFIG_PATH environment variable is required"
+    );
     process.exit(1);
   }
 

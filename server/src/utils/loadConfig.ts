@@ -3,9 +3,21 @@ import path from "path";
 import fs from "fs";
 
 // Preload common schemas
-const databaseSchemaPath = "src/schemas/database.schema.json";
+// Preload common schemas
+const schemasDir = path.join(__dirname, "../schemas");
+const databaseSchemaPath = path.join(schemasDir, "database.schema.json");
 if (fs.existsSync(databaseSchemaPath)) {
   addSchema(loadSchema(databaseSchemaPath), "database.schema.json");
+}
+
+const profileSchemaPath = path.join(schemasDir, "profile.schema.json");
+if (fs.existsSync(profileSchemaPath)) {
+  addSchema(loadSchema(profileSchemaPath), "profile.schema.json");
+}
+
+const productSchemaPath = path.join(schemasDir, "product.schema.json");
+if (fs.existsSync(productSchemaPath)) {
+  addSchema(loadSchema(productSchemaPath), "product.schema.json");
 }
 
 export function loadConfig<T>(configPath: string, schemaPath: string): T {
@@ -23,8 +35,9 @@ export function loadConfig<T>(configPath: string, schemaPath: string): T {
   const config = {
     ...rootConfig,
     database: loadSiblingYaml("database.yaml"),
+    profile: loadSiblingYaml("profile.yaml"),
+    product: loadSiblingYaml("product.yaml"),
   };
-
   const schema = loadSchema(schemaPath);
   return validate<T>(schema, config);
 }

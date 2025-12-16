@@ -8,7 +8,23 @@ export interface ServerConfig {
   version: string;
 }
 
+export interface ProfileConfig {
+  collection: string;
+  allowedIdentifiers: string[];
+  defaultIdentifiers: string[];
+  projection: string[];
+}
+
+export interface ProductConfig {
+  collection: string;
+  allowedIdentifiers: string[];
+  defaultIdentifiers: string[];
+  projection: string[];
+}
+
 export interface Config {
   database: DatabaseConfig;
   server: ServerConfig;
+  profile: ProfileConfig;
+  product?: ProductConfig;
 }

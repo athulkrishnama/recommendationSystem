@@ -1,0 +1,18 @@
+collection: users
+
+allowedIdentifiers:
+  - id
+  - email
+  - name
+  - username
+
+defaultIdentifiers:
+  - email
+  - username
+projection:
+  - id
+  - name
+  - email
+  - age
+  - monthlySpend
+  - history

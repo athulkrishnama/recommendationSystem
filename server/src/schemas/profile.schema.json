@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "profiles.schema.json",
+  "title": "Profiles Configuration Schema",
+  "description": "Configuration for profile storage, identity resolution, and field projection",
+
+  "type": "object",
+  "required": [
+    "collection",
+    "allowedIdentifiers",
+    "defaultIdentifiers",
+    "projection"
+  ],
+
+  "properties": {
+    "collection": {
+      "type": "string",
+      "minLength": 1,
+      "description": "MongoDB collection name where profile documents are stored"
+    },
+
+    "allowedIdentifiers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "All fields that are allowed to be used as profile identifiers",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+
+    "defaultIdentifiers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Identifier fields used when the tool does not explicitly specify identifiers",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+
+    "projection": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Fields that are allowed to be read from the profile document",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+
+  "additionalProperties": false
+}

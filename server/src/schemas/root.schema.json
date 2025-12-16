@@ -6,6 +6,12 @@
     "database": {
       "$ref": "database.schema.json"
     },
+    "profile": {
+      "$ref": "profile.schema.json"
+    },
+    "product": {
+      "$ref": "product.schema.json"
+    },
     "server": {
       "type": "object",
       "properties": {
